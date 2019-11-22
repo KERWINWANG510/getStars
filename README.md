@@ -1,2 +1,2 @@
 # getStars
-Cocos 官方文档中的示例
+Cocos create 官方文档中的示例
