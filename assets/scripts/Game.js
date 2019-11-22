@@ -46,6 +46,8 @@ cc.Class({
         this.node.addChild(newStar);
         //为星星设置一个随机位置
         newStar.setPosition(this.getNewStarPosition());
+        //在星星组件上暂存Game对象的引用
+        newStar.getComponent("Star").game = this;
     },
 
     //生成随机位置

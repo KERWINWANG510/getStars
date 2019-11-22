@@ -16,9 +16,29 @@ cc.Class({
         pickRadius:0
     },
 
-    // LIFE-CYCLE CALLBACKS:
+    getPlayerDistance:function(){
+        //根据player节点位置判断距离
+        var playerPos = this.game.player.getPosition();
+        //根据两点位置计算两点之间的距离
+        var dist = this.node.position.sub(playerPos).mag();
+        return dist;
+    },
 
-    // onLoad () {},
+    onPicked:function(){
+        //当星星被收集时，调用Game脚本中的接口，生成一个新的星星
+        this.game.spawnNewStar();
+        //然后销毁当前星星节点
+        this.node.destroy();
+    },
+
+    update:function(dt){
+        //每帧判断和主角之间的距离是否小于收集距离
+        if(this.getPlayerDistance() < this.pickRadius){
+            //调用收集行为
+            this.onPicked();
+            return;
+        }
+    },
 
     start () {
 
