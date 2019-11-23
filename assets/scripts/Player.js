@@ -106,5 +106,10 @@ cc.Class({
         }
         //根据当前速度更新主角位置
         this.node.x += this.xSpeed * dt;
+        //主角的位置不能超过canvas的边界
+        var gameBorder = cc.game.canvas.width/2;
+        if(Math.abs(this.node.x) > gameBorder){
+            this.node.x = gameBorder * this.node.x / Math.abs(this.node.x);
+        }
     },
 });
