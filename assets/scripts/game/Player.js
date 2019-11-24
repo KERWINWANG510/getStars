@@ -24,7 +24,9 @@ cc.Class({
         jumpAudio:{
             default:null,
             type:cc.AudioClip
-        }
+        },
+        //形变时间
+        changeDuration:0
     },
 
     setJumpAction:function(){
@@ -32,10 +34,15 @@ cc.Class({
         var jumpUp = cc.moveBy(this.jumpDuration, cc.v2(0, this.jumpHeight)).easing(cc.easeCubicActionOut());
         //下落
         var jumpDown = cc.moveBy(this.jumpDuration, cc.v2(0, -this.jumpHeight)).easing(cc.easeCubicActionIn());
+        //主角在上升和下降的时候产生形变
+        var taller = cc.scaleTo(this.changeDuration,1, 1.2);
+        var shorter = cc.scaleTo(this.changeDuration,1, 0.8);
+        var reduction = cc.scaleTo(this.changeDuration, 1, 1);
+
         //添加一个回调函数，用于在动作结束时调用我们定义的其他方法
         var callback = cc.callFunc(this.playJumpSound, this);
         //不断重复，每次完成落地动作后，调用回调不播放声音
-        return cc.repeatForever(cc.sequence(jumpUp, jumpDown, callback));
+        return cc.repeatForever(cc.sequence(shorter, taller, jumpUp,reduction, jumpDown, callback));
     },
 
     playJumpSound:function(){

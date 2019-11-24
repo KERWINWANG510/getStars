@@ -39,6 +39,16 @@ cc.Class({
         scoreAudio:{
             default:null,
             type:cc.AudioClip
+        },
+        //重新开始按钮
+        restartBtn:{
+            default:null,
+            type:cc.Button
+        },
+        //得分动画预制资源
+        animRootPrefab:{
+            default:null,
+            type:cc.Prefab
         }
     },
 
@@ -53,14 +63,39 @@ cc.Class({
         this.spawnNewStar();
         //初始化记分
         this.score = 0;
+        //使用对象池管理预制
+        this.currentAnimRoot = null;
+        this.animRootPrefabPool = new cc.NodePool("ScoreAnim");
+    },
+    //生成动画预制
+    spawnAnimRoot:function(){
+        var fx;
+        if(this.animRootPrefabPool.size() > 0){
+            fx = this.animRootPrefabPool.get(this);
+        }else{
+            fx = cc.instantiate(this.animRootPrefab);
+            fx.getComponent("ScoreAnim").reuse(this);
+        }
+        return fx;
     },
     //更新记分
-    gainScore:function(){
+    gainScore:function(pos){
         this.score += 1;
         //更新scoreDisplay label的文字
         this.scoreDisplay.string = "Score: " + this.score;
+
+        //播放特效,这个功能还有bug
+        // this.currentAnimRoot = this.spawnAnimRoot();
+        // this.node.addChild(this.currentAnimRoot.node);
+        // this.currentAnimRoot.node.setPosition(pos);
+        // this.currentAnimRoot.getComponent(cc.Animation).play("score_pop");
+
         //播放得分音效
         cc.audioEngine.playEffect(this.scoreAudio, false);
+    },
+    //回收动画
+    despawnAnimRoot:function(){
+        this.animRootPrefabPool.put(this.currentAnimRoot);
     },
     //生成星星
     spawnNewStar:function(){
@@ -106,6 +141,13 @@ cc.Class({
     gameOver:function(){
         //停止player节点的所有动作
         this.player.stopAllActions();
+        //cc.game.addPersistRootNode("score");
+        //cc.director.loadScene("home");
+        this.restartBtn.node.active = true;
+        this.player.getComponent("Player").enabled = false;
+    },
+
+    restartGame:function(){
         cc.director.loadScene("game");
     }
 });
